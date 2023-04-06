@@ -64,7 +64,30 @@ function handleGet(event) {
 function handlePost(event) {
     return __awaiter(this, void 0, void 0, function* () {
         if (event.body != null) {
-            const cat = JSON.parse(event.body);
+            let cat;
+            try {
+                cat = JSON.parse(event.body);
+            }
+            catch (e) {
+                if (typeof e === "string") {
+                    return {
+                        statusCode: 400,
+                        body: JSON.stringify({ "error": e })
+                    };
+                }
+                else if (e instanceof Error) {
+                    return {
+                        statusCode: 400,
+                        body: JSON.stringify({ "error": e.message })
+                    };
+                }
+                else {
+                    return {
+                        statusCode: 400,
+                        body: JSON.stringify({ "error": "An error occurred while parsing JSON body." })
+                    };
+                }
+            }
             const validateResponse = validateCatPost(cat);
             if (validateResponse !== null) {
                 return validateResponse;
@@ -149,6 +172,7 @@ function handleDelete(event) {
             }
         }
         else {
+            // this will never happen in practice, as ApiGateway will filter requests with missing Ids
             return {
                 statusCode: 400,
                 body: JSON.stringify({ "error": "Missing id parameter in request." })
@@ -221,6 +245,7 @@ function getCatById(event) {
             }
         }
         else {
+            // this will never happen in practice, as ApiGateway will filter requests with missing Ids
             return {
                 statusCode: 400,
                 body: JSON.stringify({ "error": "Missing id parameter in request." })

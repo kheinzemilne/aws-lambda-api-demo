@@ -177,6 +177,26 @@ describe('Tests Post New Cat', function () {
         expect(result.body).to.be.an('string')
         expect(result.body).to.be.equal(JSON.stringify({"error": "Invalid birth date. Must be in yyyy-mm-dd format."}))
     })
+
+    it('Posted cat with invalid JSON returns 400', async () => {
+        // had to be more explicit with the body string on this event because JSON.stringify
+        // was "fixing" the bad data before it got to the handler
+        const event = createEvent({
+            template: 'aws:apiGateway',
+            merge: {
+                body: "{\r\n    \"name\": \"Snuggles\",\r\n    \"birth_date\": 1998-11-30\r\n}",
+                path: "/api/cat/new/",
+                httpMethod: "POST"
+            }
+        });
+
+        const result = await lambdaHandler(event)
+
+        expect(result).to.be.an('object')
+        expect(result.statusCode).to.be.equal(400)
+        expect(result.body).to.be.an('string')
+        expect(result.body).to.be.equal(JSON.stringify({"error": "Unexpected number in JSON at position 50"}))
+    })
 });
 
 describe('Tests Delete Cat by ID', function () {

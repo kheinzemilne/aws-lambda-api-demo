@@ -80,7 +80,27 @@ import { json } from "stream/consumers";
 
   async function handlePost(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     if (event.body != null) {
-      const cat: CatDto = JSON.parse(event.body)
+      let cat: CatDto
+      try {
+        cat = JSON.parse(event.body)
+      } catch (e) {
+        if (typeof e === "string") {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({"error": e})
+          }
+        } else if (e instanceof Error) {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({"error": e.message})
+          }
+        } else {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({"error": "An error occurred while parsing JSON body."})
+          }
+        }
+      }
 
       const validateResponse: APIGatewayProxyResult | null = validateCatPost(cat)
 
