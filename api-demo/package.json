@@ -1,0 +1,22 @@
+{
+  "name": "api-demo",
+  "version": "1.0.0",
+  "description": "api demo for NodeJS",
+  "main": "app.js",
+  "repository": "",
+  "author": "Kira Heinze-Milne",
+  "license": "MIT",
+  "dependencies": {
+    "aws-event-mocks": "^0.0.0",
+    "axios": ">=0.21.1"
+  },
+  "scripts": {
+    "compile": "tsc",
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "blinkdb": "^0.10.0",
+    "chai": "^4.3.6",
+    "mocha": "^10.1.0"
+  }
+}

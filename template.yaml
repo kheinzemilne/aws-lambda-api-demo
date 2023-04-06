@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  api-demo
+  
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  ApiDemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        GetCat:
+          Type: Api
+          Properties:
+            Path: /api/cat/single/{id}
+            Method: get
+        PostCat:
+          Type: Api
+          Properties:
+            Path: /api/cat/new/
+            Method: post
+        DeleteCat:
+          Type: Api
+          Properties:
+            Path: /api/cat/delete/{id}
+            Method: delete
+        GetCatList:
+          Type: Api
+          Properties:
+            Path: /api/cat/list/
+            Method: get
+    Metadata:
+      DockerTag: nodejs18.x-v1
+      DockerContext: ./api-demo
+      Dockerfile: Dockerfile
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ApiDemoApi:
+    Description: "API Gateway endpoint URL for Prod stage for Api Demo function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/"
+  ApiDemoFunction:
+    Description: "api-demo Lambda Function ARN"
+    Value: !GetAtt ApiDemoFunction.Arn
+  ApiDemoFunctionIamRole:
+    Description: "Implicit IAM Role created for api-demo function"
+    Value: !GetAtt ApiDemoFunctionRole.Arn
